@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import uk.co.edbrook.hibernate.post.dto.PostCommentDto;
 import uk.co.edbrook.hibernate.post.dto.PostDto;
+import uk.co.edbrook.hibernate.post.projection.PostWithCommentsCount;
 
 import java.util.List;
 import java.util.Optional;
@@ -35,6 +36,10 @@ public class PostService {
     public Optional<PostDto> getPostById(long id) {
         return postRepo.findById(id)
             .map(PostService::postWithoutCommentsToDto);
+    }
+
+    public List<PostWithCommentsCount> allPostsWithCommentCount() {
+        return postRepo.findAllWithCommentCount();
     }
 
     private static PostDto postWithoutCommentsToDto(Post p) {

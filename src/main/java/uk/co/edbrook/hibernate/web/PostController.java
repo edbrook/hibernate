@@ -10,6 +10,9 @@ import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 import uk.co.edbrook.hibernate.post.PostService;
 import uk.co.edbrook.hibernate.post.dto.PostDto;
+import uk.co.edbrook.hibernate.post.projection.PostWithCommentsCount;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/posts")
@@ -29,7 +32,7 @@ public class PostController {
             .publishOn(Schedulers.boundedElastic());
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/id/{id}")
     public Mono<PostDto> getPostWithCommentsById(
         @PathVariable long id,
         @RequestParam(name = "comments", required = false, defaultValue = "false") boolean comments) {
@@ -40,5 +43,10 @@ public class PostController {
                     : postService.getPostById(id)
                 ).orElse(null))
             .publishOn(Schedulers.boundedElastic());
+    }
+
+    @GetMapping("/with_comment_count")
+    public Mono<List<PostWithCommentsCount>> getPostsWithCommentCount() {
+        return Mono.fromCallable(postService::allPostsWithCommentCount);
     }
 }
